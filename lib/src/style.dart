@@ -99,6 +99,9 @@ class Style {
   /// Default: normal (0),
   double? letterSpacing;
 
+  /// CSS `letter-spacing` value before relative `em`/`rem` units are resolved.
+  Length? letterSpacingLength;
+
   /// CSS attribute "`list-style-image`"
   ///
   /// Inherited: yes,
@@ -251,7 +254,8 @@ class Style {
     this.fontWeight,
     this.height,
     this.lineHeight,
-    this.letterSpacing,
+    @Deprecated("Use letterSpacingLength instead.") this.letterSpacing,
+    this.letterSpacingLength,
     this.listStyleImage,
     this.listStyleType,
     this.listStylePosition,
@@ -315,7 +319,7 @@ class Style {
       fontSize: fontSize?.value,
       fontStyle: fontStyle,
       fontWeight: fontWeight,
-      letterSpacing: letterSpacing,
+      letterSpacing: letterSpacingLength?.value ?? letterSpacing,
       shadows: textShadow,
       wordSpacing: wordSpacing,
       height: lineHeight?.size ?? 1.0,
@@ -344,6 +348,7 @@ class Style {
       height: other.height,
       lineHeight: other.lineHeight,
       letterSpacing: other.letterSpacing,
+      letterSpacingLength: other.letterSpacingLength,
       listStyleImage: other.listStyleImage,
       listStyleType: other.listStyleType,
       listStylePosition: other.listStylePosition,
@@ -396,6 +401,7 @@ class Style {
       fontWeight: child.fontWeight ?? fontWeight,
       lineHeight: finalLineHeight,
       letterSpacing: child.letterSpacing ?? letterSpacing,
+      letterSpacingLength: child.letterSpacingLength ?? letterSpacingLength,
       listStyleImage: child.listStyleImage ?? listStyleImage,
       listStyleType: child.listStyleType ?? listStyleType,
       listStylePosition: child.listStylePosition ?? listStylePosition,
@@ -432,7 +438,8 @@ class Style {
     FontWeight? fontWeight,
     Height? height,
     LineHeight? lineHeight,
-    double? letterSpacing,
+    @Deprecated("Use letterSpacingLength instead.") double? letterSpacing,
+    Length? letterSpacingLength,
     ListStyleImage? listStyleImage,
     ListStyleType? listStyleType,
     ListStylePosition? listStylePosition,
@@ -475,6 +482,7 @@ class Style {
       height: height ?? this.height,
       lineHeight: lineHeight ?? this.lineHeight,
       letterSpacing: letterSpacing ?? this.letterSpacing,
+      letterSpacingLength: letterSpacingLength ?? this.letterSpacingLength,
       listStyleImage: listStyleImage ?? this.listStyleImage,
       listStyleType: listStyleType ?? this.listStyleType,
       listStylePosition: listStylePosition ?? this.listStylePosition,
@@ -517,7 +525,9 @@ class Style {
           textStyle.fontSize != null ? FontSize(textStyle.fontSize!) : null,
       fontStyle: textStyle.fontStyle,
       fontWeight: textStyle.fontWeight,
-      letterSpacing: textStyle.letterSpacing,
+      letterSpacingLength: textStyle.letterSpacing != null
+          ? Length(textStyle.letterSpacing!)
+          : null,
       textShadow: textStyle.shadows,
       wordSpacing: textStyle.wordSpacing,
       lineHeight: LineHeight(textStyle.height ?? 1.2),
@@ -540,6 +550,14 @@ class Style {
         fontSize?.calculateRelativeValue(remValue, emValue);
     if (calculatedFontSize != null) {
       fontSize = FontSize(calculatedFontSize);
+    }
+
+    if (letterSpacingLength case final length?) {
+      final calculatedLetterSpacing =
+          length.calculateRelativeValue(remValue, emValue);
+      if (calculatedLetterSpacing != null) {
+        letterSpacingLength = Length(calculatedLetterSpacing);
+      }
     }
 
     margin = margin?.copyWith(

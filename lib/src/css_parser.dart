@@ -306,6 +306,12 @@ Style declarationsToStyle(Map<String, List<css.Expression>> declarations) {
           style.lineHeight =
               ExpressionMapping.expressionToLineHeight(value.first);
           break;
+        case 'letter-spacing':
+          final letterSpacing =
+              ExpressionMapping.expressionToLetterSpacing(value.first);
+          style.letterSpacingLength =
+              letterSpacing ?? style.letterSpacingLength;
+          break;
         case 'font-family':
           style.fontFamily =
               ExpressionMapping.expressionToFontFamily(value.first) ??
@@ -1055,6 +1061,28 @@ class ExpressionMapping {
           units: "length");
     }
     return LineHeight.normal;
+  }
+
+  static Length? expressionToLetterSpacing(css.Expression value) {
+    if (value is css.LiteralTerm && value.text == "normal") {
+      return Length(0);
+    }
+
+    if (value is css.EmTerm) {
+      final parsedValue = double.tryParse(value.text.trim());
+      return parsedValue != null ? Length(parsedValue, Unit.em) : null;
+    } else if (value is css.RemTerm) {
+      final parsedValue = double.tryParse(value.text.trim());
+      return parsedValue != null ? Length(parsedValue, Unit.rem) : null;
+    } else if (value is css.LengthTerm) {
+      final parsedValue = double.tryParse(value.text.trim());
+      return parsedValue != null ? Length(parsedValue) : null;
+    } else if (value is css.NumberTerm) {
+      final parsedValue = double.tryParse(value.text.trim());
+      return parsedValue != null ? Length(parsedValue) : null;
+    }
+
+    return null;
   }
 
   static ListStyleImage? expressionToListStyleImage(css.UriTerm value) {
