@@ -97,7 +97,6 @@ class Style {
   ///
   /// Inherited: yes,
   /// Default: normal (0),
-  @Deprecated("Use letterSpacingLength instead.")
   double? letterSpacing;
 
   /// CSS `letter-spacing` value before relative `em`/`rem` units are resolved.
@@ -255,7 +254,7 @@ class Style {
     this.fontWeight,
     this.height,
     this.lineHeight,
-    this.letterSpacing,
+    @Deprecated("Use letterSpacingLength instead.") this.letterSpacing,
     this.letterSpacingLength,
     this.listStyleImage,
     this.listStyleType,
@@ -320,7 +319,6 @@ class Style {
       fontSize: fontSize?.value,
       fontStyle: fontStyle,
       fontWeight: fontWeight,
-      // ignore: deprecated_member_use_from_same_package
       letterSpacing: letterSpacingLength?.value ?? letterSpacing,
       shadows: textShadow,
       wordSpacing: wordSpacing,
@@ -349,8 +347,6 @@ class Style {
       fontWeight: other.fontWeight,
       height: other.height,
       lineHeight: other.lineHeight,
-      // ignore: deprecated_member_use_from_same_package
-      letterSpacing: other.letterSpacing,
       letterSpacingLength: other.letterSpacingLength,
       listStyleImage: other.listStyleImage,
       listStyleType: other.listStyleType,
@@ -375,7 +371,7 @@ class Style {
       maxLines: other.maxLines,
       textOverflow: other.textOverflow,
       textTransform: other.textTransform,
-    );
+    )..letterSpacing = other.letterSpacing ?? letterSpacing;
   }
 
   Style copyOnlyInherited(Style child) {
@@ -403,8 +399,6 @@ class Style {
       fontStyle: child.fontStyle ?? fontStyle,
       fontWeight: child.fontWeight ?? fontWeight,
       lineHeight: finalLineHeight,
-      // ignore: deprecated_member_use_from_same_package
-      letterSpacing: child.letterSpacing ?? letterSpacing,
       letterSpacingLength: child.letterSpacingLength ?? letterSpacingLength,
       listStyleImage: child.listStyleImage ?? listStyleImage,
       listStyleType: child.listStyleType ?? listStyleType,
@@ -424,7 +418,7 @@ class Style {
       maxLines: child.maxLines ?? maxLines,
       textOverflow: child.textOverflow ?? textOverflow,
       textTransform: child.textTransform ?? textTransform,
-    );
+    )..letterSpacing = child.letterSpacing ?? letterSpacing;
   }
 
   Style copyWith({
@@ -442,7 +436,7 @@ class Style {
     FontWeight? fontWeight,
     Height? height,
     LineHeight? lineHeight,
-    double? letterSpacing,
+    @Deprecated("Use letterSpacingLength instead.") double? letterSpacing,
     Length? letterSpacingLength,
     ListStyleImage? listStyleImage,
     ListStyleType? listStyleType,
@@ -470,7 +464,7 @@ class Style {
     TextTransform? textTransform,
     bool? beforeAfterNull,
   }) {
-    return Style(
+    final style = Style(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       color: color ?? this.color,
       counterIncrement: counterIncrement ?? this.counterIncrement,
@@ -485,8 +479,6 @@ class Style {
       fontWeight: fontWeight ?? this.fontWeight,
       height: height ?? this.height,
       lineHeight: lineHeight ?? this.lineHeight,
-      // ignore: deprecated_member_use_from_same_package
-      letterSpacing: letterSpacing ?? this.letterSpacing,
       letterSpacingLength: letterSpacingLength ?? this.letterSpacingLength,
       listStyleImage: listStyleImage ?? this.listStyleImage,
       listStyleType: listStyleType ?? this.listStyleType,
@@ -513,6 +505,8 @@ class Style {
       textOverflow: textOverflow ?? this.textOverflow,
       textTransform: textTransform ?? this.textTransform,
     );
+    style.letterSpacing = letterSpacing ?? this.letterSpacing;
+    return style;
   }
 
   factory Style.fromTextStyle(TextStyle textStyle) {
