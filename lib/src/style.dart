@@ -347,6 +347,7 @@ class Style {
       fontWeight: other.fontWeight,
       height: other.height,
       lineHeight: other.lineHeight,
+      letterSpacing: other.letterSpacing,
       letterSpacingLength: other.letterSpacingLength,
       listStyleImage: other.listStyleImage,
       listStyleType: other.listStyleType,
@@ -371,7 +372,7 @@ class Style {
       maxLines: other.maxLines,
       textOverflow: other.textOverflow,
       textTransform: other.textTransform,
-    )..letterSpacing = other.letterSpacing ?? letterSpacing;
+    );
   }
 
   Style copyOnlyInherited(Style child) {
@@ -399,6 +400,7 @@ class Style {
       fontStyle: child.fontStyle ?? fontStyle,
       fontWeight: child.fontWeight ?? fontWeight,
       lineHeight: finalLineHeight,
+      letterSpacing: child.letterSpacing ?? letterSpacing,
       letterSpacingLength: child.letterSpacingLength ?? letterSpacingLength,
       listStyleImage: child.listStyleImage ?? listStyleImage,
       listStyleType: child.listStyleType ?? listStyleType,
@@ -418,7 +420,7 @@ class Style {
       maxLines: child.maxLines ?? maxLines,
       textOverflow: child.textOverflow ?? textOverflow,
       textTransform: child.textTransform ?? textTransform,
-    )..letterSpacing = child.letterSpacing ?? letterSpacing;
+    );
   }
 
   Style copyWith({
@@ -464,7 +466,7 @@ class Style {
     TextTransform? textTransform,
     bool? beforeAfterNull,
   }) {
-    final style = Style(
+    return Style(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       color: color ?? this.color,
       counterIncrement: counterIncrement ?? this.counterIncrement,
@@ -479,6 +481,7 @@ class Style {
       fontWeight: fontWeight ?? this.fontWeight,
       height: height ?? this.height,
       lineHeight: lineHeight ?? this.lineHeight,
+      letterSpacing: letterSpacing ?? this.letterSpacing,
       letterSpacingLength: letterSpacingLength ?? this.letterSpacingLength,
       listStyleImage: listStyleImage ?? this.listStyleImage,
       listStyleType: listStyleType ?? this.listStyleType,
@@ -505,8 +508,6 @@ class Style {
       textOverflow: textOverflow ?? this.textOverflow,
       textTransform: textTransform ?? this.textTransform,
     );
-    style.letterSpacing = letterSpacing ?? this.letterSpacing;
-    return style;
   }
 
   factory Style.fromTextStyle(TextStyle textStyle) {
