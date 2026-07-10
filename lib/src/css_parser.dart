@@ -311,7 +311,6 @@ Style declarationsToStyle(Map<String, List<css.Expression>> declarations) {
               ExpressionMapping.expressionToLetterSpacing(value.first);
           style.letterSpacingLength =
               letterSpacing ?? style.letterSpacingLength;
-          style.letterSpacing = letterSpacing?.value ?? style.letterSpacing;
           break;
         case 'font-family':
           style.fontFamily =

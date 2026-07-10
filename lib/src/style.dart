@@ -97,6 +97,7 @@ class Style {
   ///
   /// Inherited: yes,
   /// Default: normal (0),
+  @Deprecated("Use letterSpacingLength instead.")
   double? letterSpacing;
 
   /// CSS `letter-spacing` value before relative `em`/`rem` units are resolved.
@@ -319,7 +320,8 @@ class Style {
       fontSize: fontSize?.value,
       fontStyle: fontStyle,
       fontWeight: fontWeight,
-      letterSpacing: letterSpacing,
+      // ignore: deprecated_member_use_from_same_package
+      letterSpacing: letterSpacingLength?.value ?? letterSpacing,
       shadows: textShadow,
       wordSpacing: wordSpacing,
       height: lineHeight?.size ?? 1.0,
@@ -347,6 +349,7 @@ class Style {
       fontWeight: other.fontWeight,
       height: other.height,
       lineHeight: other.lineHeight,
+      // ignore: deprecated_member_use_from_same_package
       letterSpacing: other.letterSpacing,
       letterSpacingLength: other.letterSpacingLength,
       listStyleImage: other.listStyleImage,
@@ -400,6 +403,7 @@ class Style {
       fontStyle: child.fontStyle ?? fontStyle,
       fontWeight: child.fontWeight ?? fontWeight,
       lineHeight: finalLineHeight,
+      // ignore: deprecated_member_use_from_same_package
       letterSpacing: child.letterSpacing ?? letterSpacing,
       letterSpacingLength: child.letterSpacingLength ?? letterSpacingLength,
       listStyleImage: child.listStyleImage ?? listStyleImage,
@@ -481,6 +485,7 @@ class Style {
       fontWeight: fontWeight ?? this.fontWeight,
       height: height ?? this.height,
       lineHeight: lineHeight ?? this.lineHeight,
+      // ignore: deprecated_member_use_from_same_package
       letterSpacing: letterSpacing ?? this.letterSpacing,
       letterSpacingLength: letterSpacingLength ?? this.letterSpacingLength,
       listStyleImage: listStyleImage ?? this.listStyleImage,
@@ -525,7 +530,6 @@ class Style {
           textStyle.fontSize != null ? FontSize(textStyle.fontSize!) : null,
       fontStyle: textStyle.fontStyle,
       fontWeight: textStyle.fontWeight,
-      letterSpacing: textStyle.letterSpacing,
       letterSpacingLength: textStyle.letterSpacing != null
           ? Length(textStyle.letterSpacing!)
           : null,
@@ -553,10 +557,12 @@ class Style {
       fontSize = FontSize(calculatedFontSize);
     }
 
-    if (letterSpacingLength != null) {
-      letterSpacing =
-          letterSpacingLength!.calculateRelativeValue(remValue, emValue) ??
-              letterSpacingLength!.value;
+    if (letterSpacingLength case final length?) {
+      final calculatedLetterSpacing =
+          length.calculateRelativeValue(remValue, emValue);
+      if (calculatedLetterSpacing != null) {
+        letterSpacingLength = Length(calculatedLetterSpacing);
+      }
     }
 
     margin = margin?.copyWith(
