@@ -506,21 +506,27 @@ class RenderCSSBox extends RenderBox
 
     final CSSBoxParentData parentData = child.parentData! as CSSBoxParentData;
     RenderBox? markerBoxChild = parentData.nextSibling;
+    final resolvedWidth = _resolveDimension(
+      this.width,
+      containingBlockSize.width,
+    );
+    final resolvedHeight = _resolveDimension(
+      this.height,
+      containingBlockSize.height,
+    );
+    final autoMaxWidth = containingBlockSize.width -
+        (margins.left?.value ?? 0) -
+        (margins.right?.value ?? 0);
+    final autoMaxHeight = containingBlockSize.height -
+        (margins.top?.value ?? 0) -
+        (margins.bottom?.value ?? 0);
 
     // Calculate child size
     BoxConstraints childConstraints = constraints.copyWith(
-      maxWidth: (this.width.unit != Unit.auto)
-          ? this.width.value
-          : containingBlockSize.width -
-              (margins.left?.value ?? 0) -
-              (margins.right?.value ?? 0),
-      maxHeight: (this.height.unit != Unit.auto)
-          ? this.height.value
-          : containingBlockSize.height -
-              (margins.top?.value ?? 0) -
-              (margins.bottom?.value ?? 0),
-      minWidth: (this.width.unit != Unit.auto) ? this.width.value : 0,
-      minHeight: (this.height.unit != Unit.auto) ? this.height.value : 0,
+      maxWidth: resolvedWidth ?? autoMaxWidth,
+      maxHeight: resolvedHeight ?? autoMaxHeight,
+      minWidth: resolvedWidth ?? 0,
+      minHeight: resolvedHeight ?? 0,
     );
 
     if (markerBoxChild != null) {
@@ -575,6 +581,22 @@ class RenderCSSBox extends RenderBox
     }
 
     return _Sizes(constraints.constrain(Size(width, height)), childSize);
+  }
+
+  double? _resolveDimension(Dimension dimension, double parentExtent) {
+    if (dimension.unit == Unit.auto) {
+      return null;
+    }
+
+    if (dimension.unit == Unit.percent && parentExtent.isFinite) {
+      return parentExtent * dimension.value / 100;
+    }
+
+    if (dimension.unit == Unit.percent) {
+      return null;
+    }
+
+    return dimension.value;
   }
 
   @override
