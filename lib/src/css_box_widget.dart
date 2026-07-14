@@ -506,13 +506,9 @@ class RenderCSSBox extends RenderBox
 
     final CSSBoxParentData parentData = child.parentData! as CSSBoxParentData;
     RenderBox? markerBoxChild = parentData.nextSibling;
-    final resolvedWidth = _resolveDimension(
+    final resolvedWidth = _resolveWidth(
       this.width,
       containingBlockSize.width,
-    );
-    final resolvedHeight = _resolveDimension(
-      this.height,
-      containingBlockSize.height,
     );
     final autoMaxWidth = containingBlockSize.width -
         (margins.left?.value ?? 0) -
@@ -523,10 +519,11 @@ class RenderCSSBox extends RenderBox
 
     // Calculate child size
     BoxConstraints childConstraints = constraints.copyWith(
-      maxWidth: resolvedWidth ?? autoMaxWidth,
-      maxHeight: resolvedHeight ?? autoMaxHeight,
-      minWidth: resolvedWidth ?? 0,
-      minHeight: resolvedHeight ?? 0,
+      maxWidth: (this.width.unit != Unit.auto) ? resolvedWidth : autoMaxWidth,
+      maxHeight:
+          (this.height.unit != Unit.auto) ? this.height.value : autoMaxHeight,
+      minWidth: (this.width.unit != Unit.auto) ? resolvedWidth : 0,
+      minHeight: (this.height.unit != Unit.auto) ? this.height.value : 0,
     );
 
     if (markerBoxChild != null) {
@@ -583,20 +580,12 @@ class RenderCSSBox extends RenderBox
     return _Sizes(constraints.constrain(Size(width, height)), childSize);
   }
 
-  double? _resolveDimension(Dimension dimension, double parentExtent) {
-    if (dimension.unit == Unit.auto) {
-      return null;
+  double _resolveWidth(Width width, double parentWidth) {
+    if (width.unit == Unit.percent && parentWidth.isFinite) {
+      return parentWidth * width.value / 100;
     }
 
-    if (dimension.unit == Unit.percent && parentExtent.isFinite) {
-      return parentExtent * dimension.value / 100;
-    }
-
-    if (dimension.unit == Unit.percent) {
-      return null;
-    }
-
-    return dimension.value;
+    return width.value;
   }
 
   @override
